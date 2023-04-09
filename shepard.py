@@ -1,13 +1,16 @@
 from numba import cuda
+import numpy as np
 
 
 class Shepard2D:
     points: list
+    cells: np.ndarray
     values: list
     p = -5
 
-    def __init__(self, points, values):
+    def __init__(self, points, values, cells):
         self.points = points
+        self.cells = cells
         self.values = values
 
     def interpolate(self, x, y, z):
@@ -30,6 +33,7 @@ class Shepard2D:
 @cuda.jit('void(float64[:], float64[:], float64[:], float64[:,:], float64[:], float64[:])')
 def interpolate_cuda(x, y, z, points, values, interp_values):
     i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
+    print(cuda.blockIdx.x)
     if i >= len(x):
         return
     weight = 0.0

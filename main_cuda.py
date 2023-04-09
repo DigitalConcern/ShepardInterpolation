@@ -6,7 +6,7 @@ from shepard import interpolate_cuda
 from numba import cuda
 
 # крупная сетка
-surface = meshio.read("sphere.msh")
+surface = meshio.read("sphere.msh.msh")
 # измельченная сетка
 better_surface = meshio.read("better_sphere.msh")
 
@@ -32,6 +32,7 @@ interpolated_temps_empty = np.empty(len(X), dtype=np.float64)
 
 # Подробности об устройстве
 device = cuda.get_current_device()
+print(device)
 
 d_x = cuda.to_device(X)
 d_y = cuda.to_device(Y)
@@ -55,5 +56,5 @@ interpolated_temps = d_interpolated_values.copy_to_host()
 better_surface_with_data = meshio.Mesh(better_surface.points, better_surface.cells,
                                        point_data={"T": interpolated_temps})
 
-surface_with_data.write("surface_1_temps", file_format="gmsh22")
-better_surface_with_data.write("surface_2_temps", file_format="gmsh22")
+surface_with_data.write("sphere_with_data", file_format="gmsh22")
+better_surface_with_data.write("better_sphere_with_data", file_format="gmsh22")
