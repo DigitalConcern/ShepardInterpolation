@@ -4,13 +4,11 @@ import numpy as np
 
 class Shepard:
     points: list
-    cells: np.ndarray
     values: list
-    p = -5
+    p = -7
 
-    def __init__(self, points, values, cells):
+    def __init__(self, points, values):
         self.points = points
-        self.cells = cells
         self.values = values
 
     def interpolate(self, x, y, z):
@@ -46,7 +44,7 @@ def interpolate_cuda(x, y, z, points, values, interp_values):
         if r == 0.0:
             interp_values[i] = values[j]
             return
-        w = r ** (-4 / 2)
+        w = r ** (-10 / 2)
         weight += w
         summa += w * values[j]
 

@@ -12,7 +12,7 @@ def calculate_angle(v1, v2):
     return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
 
 
-class Linear:
+class Barycentric:
     points: list
     cells: np.ndarray
     values: list
@@ -44,13 +44,8 @@ class Linear:
         return cells
 
     def interpolate(self, x, y, z):
-        # start = time.time()
         cells = self.search_cells_with_boxes(x, y, z)
-        # print(cells)
-        # end = time.time()
-        # print("Elapsed (after compilation) search_cells_with_boxes for 1 vertex = %s" % (end - start))
 
-        # start = time.time()
         for cell in cells:
             point_a = self.points[cell[0]]
             point_b = self.points[cell[1]]
@@ -97,18 +92,17 @@ class Linear:
                 continue
             if round(X[0], 5) < 0.0 or round(X[1], 5) < 0.0 or round(X[2], 5) < 0.0:
                 continue
-            # end = time.time()
-            # print("Elapsed (after compilation) barycentric coordinates for found boxes = %s" % (end - start))
             return X[0] * value_a + X[1] * value_b + X[2] * value_c
 
 
 @njit
-# @cuda.jit('void(float64[:], float64[:,:], int32[:,:], int32[:,:])')
+@cuda.jit('void(float64[:], float64[:,:], int32[:,:], int32[:,:])')
 def search_cells_with_boxes_cuda(new_point, points, cells, result_cells):
     counter = 0
-    # i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
-    # if i >= len(cells):
-    #     return
+    i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
+    if i >= len(cells):
+        return
+
     for i in range(len(cells)):
         id_point_1 = cells[i][0]
         id_point_2 = cells[i][1]
@@ -153,8 +147,6 @@ def search_cells_with_boxes_cuda(new_point, points, cells, result_cells):
             if min_y <= new_point[1] <= max_y:
                 if min_z <= new_point[2] <= max_z:
                     result_cells[counter][:3] = cells[i][:3]
-                    # for j in range(len(cells[i])):
-                    #     result_cells[counter][j] = cells[i][j]
                     counter += 1
     return result_cells
 
