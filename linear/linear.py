@@ -82,10 +82,10 @@ class Barycentric:
 
         index = self.search_nearest_neighbour(x, y, z)
 
-        start = time.time()
+        # start = time.time()
         cells = self.search_cells_with_point(index)
-        end = time.time()
-        print("Elapsed (after compilation) linear interpolation = %s" % (end - start))
+        # end = time.time()
+        # print("Elapsed (after compilation) linear interpolation = %s" % (end - start))
 
         results = []
         for cell in cells:

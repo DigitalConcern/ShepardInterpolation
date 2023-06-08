@@ -7,22 +7,22 @@ from linear import linear
 from kriging import kriging
 
 # крупная сетка
-surface = meshio.read("resources/m1_1_gmsh.msh")
+surface = meshio.read("resources/new_mesh_solution2.msh")
 # измельченная сетка
-better_surface = meshio.read("resources/better_m1_1_gmsh.msh")
+better_surface = meshio.read("resources/new_mesh2.msh")
 
-default_temps = np.linspace(273, 473, len(surface.points))
+# default_temps = np.linspace(273, 473, len(surface.points))
 
 sh = shepard.Shepard(points=np.array(surface.points, dtype=np.float64),
-                     values=default_temps) #surface.point_data["temperature"]
+                     values=surface.point_data["temperature"]) #surface.point_data["temperature"]
 
 ln = linear.Barycentric(points=np.array(surface.points, dtype=np.float64),
                         cells=surface.cells[0].data,
-                        values=default_temps)
+                        values=surface.point_data["temperature"])
 
 kg = kriging.Krige(points=np.array(surface.points, dtype=np.float64),
                    cells=surface.cells[0].data,
-                   values=default_temps)
+                   values=surface.point_data["temperature"])
 
 # surface_with_data = meshio.Mesh(points=surface.points, cells=surface.cells,
 #                                 point_data={"T": default_temps})
