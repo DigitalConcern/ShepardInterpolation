@@ -59,6 +59,21 @@ better_surface_with_data_shepard = meshio.Mesh(better_surface.points, better_sur
 better_surface_with_data_kriging = meshio.Mesh(better_surface.points, better_surface.cells,
                                                point_data={"T": interpolated_temps_kriging})
 
+deltas_ln_sh = []
+deltas_ln_kg = []
+deltas_sh_kg = []
+for i in range(len(better_surface)):
+    deltas_ln_sh.append(
+        abs(better_surface_with_data_linear.point_data["T"][i] - better_surface_with_data_shepard.point_data["T"][i]))
+    deltas_ln_sh.append(
+        abs(better_surface_with_data_linear.point_data["T"][i] - better_surface_with_data_kriging.point_data["T"][i]))
+    deltas_ln_sh.append(
+        abs(better_surface_with_data_shepard.point_data["T"][i] - better_surface_with_data_kriging.point_data["T"][i]))
+
+print("Среднее отклонение линейная и шепарда", sum(deltas_ln_sh) / len(deltas_ln_sh))
+print("Среднее отклонение линейная и кригинг", sum(deltas_ln_kg) / len(deltas_ln_kg))
+print("Среднее отклонение кригинг и шепарда", sum(deltas_sh_kg) / len(deltas_sh_kg))
+
 # surface_with_data.write("m1_1_gmsh_with_data", file_format="gmsh22")
 better_surface_with_data_linear.write("mesh2_linear", file_format="gmsh22")
 better_surface_with_data_shepard.write("mesh2_shepard", file_format="gmsh22")

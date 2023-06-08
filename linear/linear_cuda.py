@@ -8,7 +8,7 @@ from numba import njit, cuda
 
 def interpolate_cuda(new_point, points, cells, values, index, result_cells):
     # start = time.time()
-    # result_cells_empty = np.array(np.array([[0, 0, 0]] * len(cells), dtype=np.int32) * len())
+    # result_cells_empty = np.array(np.array([[0, 0, 0]] * len(cells), dtype=np.int32))
 
     # result_cells = search_cells_with_point_cuda(index, cells, result_cells_empty)
     # end = time.time()
